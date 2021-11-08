@@ -16,9 +16,10 @@ const createCheckoutSession = async (customerID, price) => {
       }
     ],
     subscription_data: {
-      trial_period_days: process.env.TRIAL_DAYS
+      
     },
 
+    //trial_period_days: process.env.TRIAL_DAYS
     success_url: `${process.env.DOMAIN}?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${process.env.DOMAIN}`
   })

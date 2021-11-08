@@ -29,9 +29,11 @@ app.use(express.static('public'))
 app.engine('html', require('ejs').renderFile)
 
 const productToPriceMap = {
-  premium: process.env.PRODUCT_PREMIUM,
-  pro: process.env.PRODUCT_PRO
+  premium: process.env.PRODUCT_PREMIUM
 }
+/**
+pro: process.env.PRODUCT_PRO
+ */
 /*
 app.get('/none', [setCurrentUser, hasPlan('none')], async function (req,res,next) {
   res.status(200).render('none.ejs')
@@ -80,7 +82,7 @@ app.get('/customerPortal/:id/:email/:name', async function (req, res) {
 
   if (!customer) {
     //console.log(`email ${email} does not exist in Stripe. Making one. `)
-    console.log(`id ${id} does not exist. Something is wrong. `)
+    console.log(`id ${_id} does not exist. Something is wrong. `)
     
     //try {
       /*
@@ -130,8 +132,8 @@ app.get('/customerPortal/:id/:email/:name', async function (req, res) {
 
       if (isTrialExpired) {
         console.log('trial expired');
-        customer.hasTrial = false;
-        customer.save();
+        //customer.hasTrial = false;
+        //customer.save();
       } else {
         console.log(
           'no trial information',
@@ -182,10 +184,10 @@ app.post('/checkout', setCurrentUser, async (req, res) => {
       new Date().getTime() + 1000 * 60 * 60 * 24 * process.env.TRIAL_DAYS
     const n = new Date(ms)
 
-    customer.plan = product
-    customer.hasTrial = true
-    customer.endDate = n
-    customer.save()
+    //customer.plan = product
+    //customer.hasTrial = true
+    //customer.endDate = n
+    //customer.save()
 
     res.send({
       sessionId: session.id
@@ -238,13 +240,23 @@ app.post('/webhook', async (req, res) => {
         user.plan = 'premium'
       }
 
+      /*
       if (data.plan.id === process.env.PRODUCT_PRO) {
         console.log('You are talking about pro product')
         user.plan = 'pro'
-      }
+      }*/
 
-      user.hasTrial = true
-      user.endDate = new Date(data.current_period_end * 1000)
+      //user.hasTrial = true
+      //user.endDate = new Date(data.current_period_end * 1000)
+
+      await user.save()
+
+      break
+    }
+    case 'customer.subscription.deleted': {
+      const user = await UserService.getUserByBillingID(data.customer)
+
+      user.plan = 'none'
 
       await user.save()
 
@@ -258,28 +270,29 @@ app.post('/webhook', async (req, res) => {
         console.log('You are talking about PREMIUM product')
         user.plan = 'premium'
       }
+      /*
 
       if (data.plan.id === process.env.PRODUCT_PRO) {
         console.log('You are talking about pro product')
         user.plan = 'pro'
-      }
+      }*/
 
       const isOnTrial = data.status === 'trialing'
 
       if (isOnTrial) {
-        user.hasTrial = true
-        user.endDate = new Date(data.current_period_end * 1000)
+        //user.hasTrial = true
+        //user.endDate = new Date(data.current_period_end * 1000)
       } else if (data.status === 'active') {
-        user.hasTrial = false
-        user.endDate = new Date(data.current_period_end * 1000)
+        //user.hasTrial = false
+        //user.endDate = new Date(data.current_period_end * 1000)
       }
 
       if (data.canceled_at) {
         // cancelled
         console.log('You just canceled the subscription' + data.canceled_at)
         user.plan = 'none'
-        user.hasTrial = false
-        user.endDate = null
+        //user.hasTrial = false
+        //user.endDate = null
       }
       console.log('actual', user.hasTrial, data.current_period_end, user.plan)
 
