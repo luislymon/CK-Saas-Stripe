@@ -1,6 +1,7 @@
 html,
 body {
   height: 100%;
+  font-family: "Avenir";
 }
 
 .btn-primary {
@@ -16,5 +17,49 @@ body {
   background: #000;
   background-color: #000;
   color: #fff;
+}
+
+.uppercase{
+  text-transform: uppercase;
+}
+
+.bold{
+  font-weight: bold;
+}
+
+.text-purple{
+  color: #ED1567;
+}
+.text-white{
+  color:#fff;
+}
+
+.title{
+  font-size: 1em;
+}
+
+.title-2x{
+  font-size: 2.5em;
+}
+
+.description{
+  font-size: 0.8em;
+}
+
+.bg-purple{
+  background-color: #ED1567;
+}
+
+.bg-silver{
+  background-color: lightslategray;
+}
+
+nav.bg-dark {
+  background-color: #141E3C !important;
+}
+
+@font-face {
+  font-family: "Avenir";
+  src: url("Avenir-Book.ttf");
 }
 

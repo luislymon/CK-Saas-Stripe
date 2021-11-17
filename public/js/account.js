@@ -1,10 +1,16 @@
 $(document).ready(function () {
   const publishableKey = 'pk_test_bOmkcP50oJs9F2B7EDfvTB2F00WkxIm6wk';
+  const back_destination = 'http://localhost:3000';
 
 
   const stripe = Stripe(publishableKey);
   const checkoutButton = $('#checkout-button');
   const manageBillingButton = $('#manage-billing-button');
+  const backDestination = $('#backDestination');
+
+  backDestination.click(function(){
+    location.href = back_destination;
+  });
 
   checkoutButton.click(function () {
     const product = $("input[name='product']:checked").val();

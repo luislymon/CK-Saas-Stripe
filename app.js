@@ -29,8 +29,15 @@ app.use(express.static('public'))
 app.engine('html', require('ejs').renderFile)
 
 const productToPriceMap = {
-  premium: process.env.PRODUCT_PREMIUM
+  premium: process.env.PRODUCT_PREMIUM,
+  premium12: process.env.PRODUCT_PREMIUM_12
 }
+
+const intervalValueToText = {
+  month: "mensual",
+  year: "anual"
+}
+
 /**
 pro: process.env.PRODUCT_PRO
  */
@@ -53,13 +60,29 @@ app.get('/', async function (req, res) {
 
 
 app.get('/account', async function (req, res) {
-  let { _id } = req.session
+  let { _id } = req.session;
+  let {interval} = req.session;
+
+  //console.log("***"+interval);
+
   let customer = await UserService.getUserByUserId(_id);
   if (!customer) {
     console.log("No customer");
     res.redirect('/')
   } else {
+    try {
+      if(customer.billingId){
+        let customerInfo = await Stripe.getCustomerByID(billingID);
+        console.log("More customer data: " + customerInfo);
+        
+      }
+      
+    } catch (error) {
+      console.log(error)
+    }
+    customer.interval = intervalValueToText[interval];
     res.render('account.ejs', { customer })
+
   }
 })
 
@@ -79,6 +102,7 @@ app.get('/customerPortal/:id/:email/:name', async function (req, res) {
   //let customer = await UserService.getUserByEmail(email)
   let customer = await UserService.getUserByUserId(_id);
   let customerInfo = {}
+  let subscriptionInfo = {}
 
   if (!customer) {
     //console.log(`email ${email} does not exist in Stripe. Making one. `)
@@ -112,6 +136,7 @@ app.get('/customerPortal/:id/:email/:name', async function (req, res) {
 
     try {
       let billingID = customer.billingID;
+      let subscriptionID = customer.subscription_id;
       if(!billingID){
         console.log(`id ${_id} does not exist in Stripe. Creating one. `);
         
@@ -124,7 +149,8 @@ app.get('/customerPortal/:id/:email/:name', async function (req, res) {
           _id: _id,
           billingID: billingID,
           plan: 'none',
-          endDate: null
+          endDate: null,
+          subscription_id: null
         });
       }
 
@@ -145,6 +171,13 @@ app.get('/customerPortal/:id/:email/:name', async function (req, res) {
 
       customerInfo = await Stripe.getCustomerByID(billingID);
       console.log(`The existing ID for ${_id} is ${JSON.stringify(customerInfo)}`);
+
+      if(subscriptionID){
+        let subscriptionInfo = await Stripe.getCustomerSubscription(subscriptionID);        
+        req.session.interval = subscriptionInfo.plan.interval;
+      }
+
+     
       req.session._id = _id;
 
       //res.status(200).json(customerInfo);
@@ -237,7 +270,15 @@ app.post('/webhook', async (req, res) => {
 
       if (data.plan.id === process.env.PRODUCT_PREMIUM) {
         console.log('You are talking about premium product')
-        user.plan = 'premium'
+        user.plan = 'premium';        
+        user.subscription_id= data.id;
+      
+      }
+
+      if (data.plan.id === process.env.PRODUCT_PREMIUM_12) {
+        console.log('You are talking about premium anual product')
+        user.plan = 'premium';
+        user.subscription_id= data.id;
       }
 
       /*
@@ -268,6 +309,11 @@ app.post('/webhook', async (req, res) => {
 
       if (data.plan.id == process.env.PRODUCT_PREMIUM) {
         console.log('You are talking about PREMIUM product')
+        user.plan = 'premium'
+      }
+
+      if (data.plan.id === process.env.PRODUCT_PREMIUM_12) {
+        console.log('You are talking about premium anual product')
         user.plan = 'premium'
       }
       /*

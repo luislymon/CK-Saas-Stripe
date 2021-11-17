@@ -5,7 +5,9 @@ const userSchema = new Schema({
   _id: String,
   email: String,
   billingID: String,
-  plan: { type: String, enum: ['none', 'premium'], default: 'none' }
+  plan: { type: String, enum: ['none', 'premium'], default: 'none' },
+  subscription_id: String,
+  subscription_interval: String
   
 })
 

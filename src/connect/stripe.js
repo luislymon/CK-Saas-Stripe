@@ -40,6 +40,11 @@ const getCustomerByID = async (id) => {
   return customer
 }
 
+const getCustomerSubscription = async (id) => {
+  const subscription = await Stripe.subscriptions.retrieve(id);
+  return subscription;
+}
+
 const addNewCustomer = async (_id, email, name) => {
   const customer = await Stripe.customers.create({
     name,
@@ -65,5 +70,6 @@ module.exports = {
   addNewCustomer,
   createCheckoutSession,
   createBillingSession,
-  createWebhook
+  createWebhook,
+  getCustomerSubscription
 }

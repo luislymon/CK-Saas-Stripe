@@ -16,36 +16,115 @@
       integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2"
       crossorigin="anonymous"
     />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
 
     <link href="./css/common.css" rel="stylesheet" />
     <link href="./css/account.css" rel="stylesheet" />
   </head>
 
-  <body class="d-flex flex-column h-100">
+  <body class="d-flex flex-column  h-100">
+
+    <nav class="navbar navbar-light bg-dark">
+      <a class="navbar-brand text-white" href="#">
+        <img src="./images/logo.png" width="40" height="40" class="d-inline-block  rounded-circle" alt="">
+        <strong>Cinekomuna</strong>
+      </a>
+      <div collapse navbar-collapse justify-content-end w-100>
+        <a href="#" id="backDestination" class="text-white"><span class="material-icons">arrow_back</span></a>
+      </div>
+    </nav>
+    
+    <img src="./images/banner-peach.png" class="img-fluid" alt="Responsive image">
     <!-- Begin page content -->
     <main role="main" class="flex-shrink-0">
       <div class="container">
+
+
         <h1 class="mt-5">Mis membresías</h1>
 
         <%if (customer ) { %>
 
         <%if (customer.plan=="none" ) { %>
         <p class="lead">
-          Actualmente no tienes un plan. Adquiere una suscripción a continuación.
+          Actualmente no tienes ninguna membresía. Adquiere una a continuación.
         </p>
-        <input type="radio" id="premium" name="product" value="premium" checked="checked" />
-        <label for="premium">Membresía Premium por $89</label><br />
+
+        
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th scope="col">&nbsp;</th>
+                  <th scope="col" class="uppercase text-center bg-silver text-white">Tu plan actual</th>
+                  <th scope="col" class="uppercase text-center bg-purple text-white">Recomendado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td></td>
+                  <td class="uppercase text-center">
+                    <p class="bold title">Base</p>
+                    <p class="bold title-2x">Gratuito</p>
+                    <p class="bold title">&nbsp;</p>
+                    <p class="text-purple description">&nbsp;</p>
+                  </td>
+                  <td class="uppercase text-center">
+                    <p class="bold title">Premium</p>
+                    <p class="bold title-2x">$89</p>
+                    <p class="bold title">MXN por mes</p>
+                    <p class="text-purple description">Ahorra 25% paga anualmente</p>
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row" class="uppercase">características</th>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                </tr>
+                <tr>
+                  <td class="description">Plataforma digital para showcase de proyectos</td>
+                  <td class="text-center"><span class="material-icons">check</span></td>
+                  <td class="text-center"><span class="material-icons">check</span></td>
+                </tr>
+                <tr>
+                  <td class="description">Perfil de Crew y/o Cast en una sola cuenta</td>
+                  <td class="text-center"><span class="material-icons">check</span></td>
+                  <td class="text-center"><span class="material-icons">check</span></td>
+                </tr>
+                <tr>
+                  <td class="description">Newsfeed</td>
+                  <td class="text-center"><span class="material-icons">check</span></td>
+                  <td class="text-center"><span class="material-icons">check</span></td>
+                </tr>
+                <tr>
+                  <td class="description">&nbsp;</td>
+                  <td class="text-center">&nbsp;</td>
+                  <td>
+                    <input type="radio" id="premium" name="product" value="premium" checked="checked" /><label for="premium">Membresía Premium mensual por $89</label><br /><br />
+                    <input type="radio" id="premium12" name="product" value="premium12" /><label for="premium12">Membresía Premium anual por $890</label><br />
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan=3 class="text-center">
+                    <button class="btn button_black" id="checkout-button" type="submit">
+                      Adquirir membresía
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          
+
+
+        
         <!--
         <input type="radio" id="pro" name="product" value="pro" />
         <label for="pro">Pro por $100</label><br />-->
 
-        <button class="btn button_black" id="checkout-button" type="submit">
-          Adquirir membresía
-        </button>
+        
 
         <% } else{ %>
         <p class="lead">
-          Actualmente cuentas con la membresía <%- customer.plan %> %>
+          Actualmente cuentas con la membresía <%- customer.plan %> <%- customer.interval %> %>
         </p>
         <!--
         <% if (customer.hasTrial) { %>
@@ -86,6 +165,9 @@
       </div>
     </main>
 
+    <br/>
+    <br/>
+    <br/>
 
     <script
       src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
